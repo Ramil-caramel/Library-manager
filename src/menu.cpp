@@ -10,71 +10,32 @@ void printMenu() {
     std::cout << "Выберите действие: ";
 }
 
-bool newBookMenu(sqlite3* db){
-    Book book;
-    std::string title;
-    std::string author;
-    //std::string description; //описание
-    std::string rating;
-    std::string review; //мнение
-    //std::vector<std::string> tags;
-    //std::vector<std::string> quotes;
-    std::string coverPhotoPath;
-    //std::string contentPhotosPath;
-    std::string bookFilePath;
+bool newBookMenu(sqlite3* db, Library* lib){
+    
+    Book prom_book = lib->addpromBook();
 
-    std::cout << "Добавление книги, если хотите оставить параметр пустым просто нажмите enther" << std::endl;
+    while(true){
+        std::string input;
+        int choice;
 
-    std:: cout << "введите название книги: ";
-    std::getline(std::cin, title);
-    std::cout << std::endl;
-    if (!title.empty()) book.settitle(title);
-
-    std:: cout << "введите автора: ";
-    std::getline(std::cin, author);
-    std::cout << std::endl;
-    if (!author.empty()) book.setauthor(author);
-
-    std::string full, line;
-    std::cout << "Введите текст описания (введите END на новой строке для завершения):\n";
-    while (std::getline(std::cin, line)) {
-        if (line == "END") break;
-        full += line + '\n'; // сохраняем с переносами
+        std::cout << "вот книга которую вы хотите добавить, вы уверены в введенных данных"<< std::endl;
+        lib->chowBook(&prom_book);
+        std::cout << "1 - да все верно" << std::endl;
+        std::cout << "2 - нет я хочу заролнить все заново" << std::endl;
+        std::getline(std::cin, input);
+        choice = std::stoi(input);
+        switch (choice){
+            case 1:
+                std::cout << lib->addBookindatabase(db, &prom_book) <<std::endl; // не забудь добавить методы файл менеджера по переносу фотки или проверки
+                return 1;
+                break;
+            case 2:
+        
+                break;
+            default:
+            return 0;
+            break;
+        }
+        prom_book = lib->addpromBook();
     }
-    if (!full.empty()) book.setdescription(full);
-    std::cout<<std::endl;
-
-    std::cout << "введите рейтинг: ";
-    std::getline(std::cin, rating);
-    if (!rating.empty()) {
-        double rate = std::stod(rating);
-        book.setrating(rate);
-    }
-    std::cout<<std::endl;
-
-    std:: cout << "введите свою рецензию: ";
-    line = "";
-    full = "";
-    while (std::getline(std::cin, line)) {
-        if (line == "END") break;
-        full += line + '\n'; // сохраняем с переносами
-    }
-    if (!full.empty()) book.setreview(full);
-    std::cout << std::endl;
-
-
-    std:: cout << "введите путь к обложке книги: ";
-    std::getline(std::cin, coverPhotoPath);
-    std::cout << std::endl;
-    if (!coverPhotoPath.empty()) book.setcoverPhotoPath(coverPhotoPath);
-
-    std:: cout << "введите путь к файлу книги: ";
-    std::getline(std::cin, bookFilePath);
-    std::cout << std::endl;
-    if (!bookFilePath.empty()) book.setbookFilePath(bookFilePath);
-
-
-    std::cout << book.addBook(db) <<std::endl; // не забудь добавить методы файл менеджера по переносу фотки или проверки
-
-    return 1;
 }

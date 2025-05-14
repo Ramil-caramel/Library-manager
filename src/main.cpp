@@ -1,20 +1,9 @@
 #include "book.hpp"
 #include "sqlite3.h"
 #include "menu.hpp"
+#include "library.hpp"
 
-int main(){
-    Book book_prom;
-
-    sqlite3* db;
-    char*  errMsg = nullptr;
-    sqlite3_stmt* stmt;
-
-    if (sqlite3_open("test.db", &db) != SQLITE_OK){
-        std::cerr << "база не открылась";
-        sqlite3_close(db);
-        return 0;
-    }
-    const char* sql = 
+const char* SQL_TABLE = 
         "CREATE TABLE IF NOT EXISTS books ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "title TEXT NOT NULL,"
@@ -26,7 +15,20 @@ int main(){
         "bookFilePath TEXT"
         ");";
 
-    if (sqlite3_exec(db, sql, 0 , 0, &errMsg) != SQLITE_OK){
+int main(){
+
+    sqlite3* db;
+    char*  errMsg = nullptr;
+    Library Lib;
+
+    if (sqlite3_open("test.db", &db) != SQLITE_OK){
+        std::cerr << "база не открылась";
+        sqlite3_close(db);
+        return 0;
+    }
+
+
+    if (sqlite3_exec(db, SQL_TABLE, 0 , 0, &errMsg) != SQLITE_OK){
         std::cerr << "error";
         sqlite3_free(errMsg);
         sqlite3_close(db);
@@ -49,7 +51,7 @@ int main(){
         switch (choice)
         {
         case 1:
-            newBookMenu(db);
+            newBookMenu(db, &Lib);
             break;
 
         case 0:

@@ -6,7 +6,7 @@
 #include <cstring>
 
 class Book{
-    private:
+    public:
 
     unsigned int id;
     std::string title;
@@ -15,18 +15,13 @@ class Book{
     double rating;
     std::string review; //мнение
     //std::vector<std::string> tags;
-    //std::vector<std::string> quotes;
     std::string coverPhotoPath;
-    //std::string contentPhotosPath;
     std::string bookFilePath;
 
-    public:
-    Book () : id{0}, title{"not found"}, author{"not found"}, description{"not found"}, rating{0}, review{"not found"},
-        coverPhotoPath{"not found"},bookFilePath{"not found"} {};
+    Book () : id{0}, title{"not find"}, author{"not find"}, description{"not find"}, rating{0}, review{"not find"},
+        coverPhotoPath{"not find"},bookFilePath{"not find"} {};
     ~Book() {}
-    bool addBook(sqlite3*);
-    void showBook();
-    bool outputBook();
+    //std::string outputBook();
     bool redacterBook();
     bool deleteBook();
 
