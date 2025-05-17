@@ -5,4 +5,5 @@
 #include "library.hpp"
 
 void printMenu();
-bool newBookMenu(sqlite3*, Library*);
+bool newBookMenu(sqlite3*, Library*); 
+bool showallBookMenu(sqlite3*, Library*);

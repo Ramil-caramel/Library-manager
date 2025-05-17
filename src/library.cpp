@@ -70,12 +70,22 @@ Book Library::addpromBook(){
     std::cout<<std::endl;
 
     std::cout << "введите рейтинг: ";
-    std::getline(std::cin, rating);
-    if (!rating.empty()) {
-        double rate = std::stod(rating);
-        book.setrating(rate);
+    try
+    {
+        std::getline(std::cin, rating);
+        if (!rating.empty()) {
+            double rate = std::stod(rating);
+            book.setrating(rate);
+        }
+        std::cout<<std::endl;
     }
-    std::cout<<std::endl;
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        std::cerr << "ТЫ НЕХОРОШИЙ ЧЕЛОВЕК ВВЕЛ НЕ ЦИФЕРКИ А ГРЯЗНУЮ БУКВУ!!!!!!!!" << std::endl;
+        book.setrating(0);
+
+    }
 
     std:: cout << "введите свою рецензию (введите END на новой строке для завершения):\n";
     line = "";
@@ -99,4 +109,62 @@ Book Library::addpromBook(){
     if (book.bookFilePath == "") book.setbookFilePath("not find");
 
     return book;
+}
+
+
+bool Library::showBookFromTable(sqlite3*db, int regim, int nach){
+    std::string sql = "SELECT id, title, author FROM books";
+    std::string reg1 = " ORDER BY title ";
+    std::string reg2 = " ORDER BY author ";
+    std::string lim = "LIMIT ? OFFSET ?";
+    
+
+    Book a;
+    sqlite3_stmt* stmt;
+    if (regim == 1){
+        sql += reg1 + lim;
+    }
+    if (regim == 2){
+        sql += reg2 +lim;
+    }
+    sql += ";";
+
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        sqlite3_bind_int(stmt, 1, 5);
+        sqlite3_bind_int(stmt, 2, nach); //ЗДЕСЬ МЕНЯЕТСЯ ЧИЧЛО ВЫВОДЩИХСЯ В КОНСОЛЬ ПОЗИЦИЙ
+
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            Book book;
+            a.id = sqlite3_column_int(stmt, 0);
+            a.title = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            a.author = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+            
+            std::cout << "id: " << a.id << " title: " << a.title << " author: " << a.author << std::endl;   
+        }
+        sqlite3_finalize(stmt);
+    } 
+    else {
+        std::cerr << "ошибка подготовки запроса" << std::endl;
+    }
+  
+
+    return 1;
+}
+
+int Library::getTotalBooksCount(sqlite3* db) {
+    const char* sql = "SELECT COUNT(*) FROM books;";
+    sqlite3_stmt* stmt; 
+    int count = 0;
+    
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) == SQLITE_OK) {
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            count = sqlite3_column_int(stmt, 0);
+        }
+        sqlite3_finalize(stmt);
+
+    }
+    else{
+        std::cout << "подгатовка запроса для просчета всей таблицы не удалась" << std::endl;
+    }
+    return count;
 }

@@ -46,7 +46,7 @@ int main(){
     do{
         printMenu();
         std::getline(std::cin, input);
-        choice = std::stoi(input);
+        choice = std::stoi(input); //ТЫ НЕХОРОШИЙ ЧЕЛОВЕК ВВЕЛ НЕ ЦИФЕРКИ А ГРЯЗНУЮ БУКВУ!!!!!!!!
         std::cout << std::endl;
         switch (choice)
         {
@@ -54,6 +54,19 @@ int main(){
             newBookMenu(db, &Lib);
             break;
 
+        case 2:
+            showallBookMenu(db, &Lib);
+            break;
+
+        case 3:
+            break;
+
+        case 4:
+            break;
+
+        case 5:
+            break;
+        
         case 0:
             break;
 
