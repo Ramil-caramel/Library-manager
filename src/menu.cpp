@@ -10,7 +10,7 @@ void printMenu() {
     std::cout << "Выберите действие: ";
 }
 
-bool newBookMenu(sqlite3* db, Library* lib){
+bool newBookMenu(Library* lib){
     
     Book prom_book = lib->addpromBook();
 
@@ -35,7 +35,7 @@ bool newBookMenu(sqlite3* db, Library* lib){
 
         switch (choice){
             case 1:
-                std::cout << lib->addBookindatabase(db, &prom_book) <<std::endl; // не забудь добавить методы файл менеджера по переносу фотки или проверки
+                std::cout << lib->addBookindatabase(&prom_book) <<std::endl; // не забудь добавить методы файл менеджера по переносу фотки или проверки
                 return 1;
                 break;
             case 2:
@@ -49,13 +49,13 @@ bool newBookMenu(sqlite3* db, Library* lib){
     }
 }
 
-bool showallBookMenu(sqlite3* db, Library* lib){
+bool showallBookMenu(Library* lib){
     int regime = 1;
 
     int nach = 0;
-    int total = lib->getTotalBooksCount(db);
+    int total = lib->getTotalBooksCount();
 
-    lib->showBookFromTable(db, regime, nach);
+    lib->showBookFromTable(regime, nach);
 
     int CHISLO_PROLETOV = 5; // я поставил 10 но где менять не придумал
     // ОНО ЕСТЬ НО Я НИЧЕГО С ЭТИМ НЕ СДЕЛАЛ
@@ -84,23 +84,23 @@ bool showallBookMenu(sqlite3* db, Library* lib){
         {
         case 1:
             regime = 1;
-            lib->showBookFromTable(db, regime, nach);
+            lib->showBookFromTable(regime, nach);
             break;
         case 2:
             regime = 2;
-            lib->showBookFromTable(db, regime, nach);
+            lib->showBookFromTable(regime, nach);
             break;
         case 3:
             if (nach - 5 >= 0){
                 nach -= 5;
             }
-            lib->showBookFromTable(db, regime, nach);
+            lib->showBookFromTable(regime, nach);
             break;
         case 4:
             if (nach + 5 < total){
                 nach += 5;
             }
-            lib->showBookFromTable(db, regime, nach);
+            lib->showBookFromTable(regime, nach);
             break;
         case 0:
             return 1;
@@ -115,7 +115,7 @@ bool showallBookMenu(sqlite3* db, Library* lib){
     
 }
 
-bool deleteBookMenu(sqlite3* db, Library* lib){
+bool deleteBookMenu(Library* lib){
     std::string input;
     int id;
     std::cout << "Введите id книги для удаления: ";
@@ -123,7 +123,7 @@ bool deleteBookMenu(sqlite3* db, Library* lib){
     {
         std::getline(std::cin, input);
         id = std::stoi(input);
-        std::cout << lib->deleteBookById(db, id);
+        std::cout << lib->deleteBookById(id);
     }
     catch(const std::exception& e)
     {
@@ -136,11 +136,11 @@ bool deleteBookMenu(sqlite3* db, Library* lib){
     return 1;
 }
 
-bool findBookMenu(sqlite3* db, Library* lib){
+bool findBookMenu(Library* lib){
 
     int regime = 1;
     int nach = 0;
-    int total = lib->getTotalBooksCount(db);
+    int total = lib->getTotalBooksCount();
 
     int CHISLO_PROLETOV = 5; // я поставил 10 но где менять не придумал
     // ОНО ЕСТЬ НО Я НИЧЕГО С ЭТИМ НЕ СДЕЛАЛ
@@ -178,30 +178,30 @@ bool findBookMenu(sqlite3* db, Library* lib){
         case 1:
             regime = 1;
             std::cout << "Включен режим поиска по названию" << std::endl;
-            lib->getFindBookFromTable(db, regime, search, nach);
+            lib->getFindBookFromTable(regime, search, nach);
             break;
         case 2:
             regime = 2;
             std::cout << "Включен режим поиска по автору" <<std::endl;
-            lib->getFindBookFromTable(db, regime, search, nach);
+            lib->getFindBookFromTable(regime, search, nach);
             break;
         case 3:
             if (nach - 5 >= 0){
                 nach -= 5;
             }
-            lib->getFindBookFromTable(db, regime, search, nach);
+            lib->getFindBookFromTable(regime, search, nach);
             break;
         case 4:
             if (nach + 5 < total){
                 nach += 5;
             }
-            lib->getFindBookFromTable(db, regime, search, nach);
+            lib->getFindBookFromTable(regime, search, nach);
             break;
         case 5:
             std::cout << "Введите новый элемент для поиска: ";
             std::getline(std::cin, search);
             nach = 0;
-            lib->getFindBookFromTable(db, regime, search, nach);
+            lib->getFindBookFromTable(regime, search, nach);
             break;
 
         case 0:

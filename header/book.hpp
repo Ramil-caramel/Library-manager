@@ -22,22 +22,4 @@ class Book{
         coverPhotoPath{"not find"},bookFilePath{"not find"} {};
     ~Book() {}
     //std::string outputBook();
-    //bool redacterBook();
-    //bool deleteBook();
-
-    //гетеры сетеры
-    std::string gettitle();
-    bool settitle(std::string);
-    std::string getauthor();
-    bool setauthor(std::string);
-    std::string getdescription();
-    bool setdescription(std::string);
-    double getrating();
-    bool setrating(double);
-    std::string getreview();
-    bool setreview(std::string&);
-    std::string getcoverPhotoPath();
-    bool setcoverPhotoPath(std::string);
-    std::string getbookFilePath();
-    bool setbookFilePath(std::string);
 };

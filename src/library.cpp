@@ -1,6 +1,38 @@
 #include "library.hpp"
 
-bool Library::addBookindatabase(sqlite3* db, Book* book){
+Library::Library(){
+    char*  errMsg = nullptr;
+
+    const char* SQL_TABLE = 
+        "CREATE TABLE IF NOT EXISTS books ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "title TEXT NOT NULL,"
+        "author TEXT NOT NULL,"
+        "description TEXT,"
+        "rating REAL,"
+        "review TEXT,"
+        "coverPhotoPath TEXT,"
+        "bookFilePath TEXT"
+        ");";
+
+    if (sqlite3_open("test.db", &db) != SQLITE_OK){
+        std::cerr << "база не открылась";
+        sqlite3_close(db);
+    }
+
+    if (sqlite3_exec(db, SQL_TABLE, 0 , 0, &errMsg) != SQLITE_OK){
+        std::cerr << "error";
+        sqlite3_free(errMsg);
+    }
+
+    
+}
+
+Library::~Library(){
+    sqlite3_close(db);
+}
+
+bool Library::addBookindatabase(Book* book){
     const char* sql = "INSERT INTO books (title, author, description, rating, review, coverPhotoPath, bookFilePath) VALUES (?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt* stmt;
 
@@ -11,13 +43,13 @@ bool Library::addBookindatabase(sqlite3* db, Book* book){
     // id не дкргаем оно само закинет так как я в начале sql поставил PRIMARY KEY AUTOINCREMENT
     // Привязываем параметры
     //sqlite3_bind_int(stmt, 1, this->id);
-    sqlite3_bind_text(stmt, 1, book->gettitle().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 2, book->getauthor().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 3, book->getdescription().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_double(stmt, 4, book->getrating()); 
-    sqlite3_bind_text(stmt, 5, book->getreview().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 6, book->getcoverPhotoPath().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 7, book->getbookFilePath().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 1, book->title.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, book->author.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, book->description.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_double(stmt, 4, book->rating); 
+    sqlite3_bind_text(stmt, 5, book->review.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 6, book->coverPhotoPath.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 7, book->bookFilePath.c_str(), -1, SQLITE_TRANSIENT);
     
     
     // Выполняем запрос
@@ -54,19 +86,19 @@ Book Library::addpromBook(){
     std:: cout << "введите название книги: ";
     std::getline(std::cin, book.title);
     std::cout << std::endl;
-    if (book.title == "") book.settitle("not find");
+    if (book.title == "") book.title = "not find";
 
     std:: cout << "введите автора: ";
     std::getline(std::cin, book.author);
     std::cout << std::endl;
-    if (book.author == "") book.setauthor("not find");
+    if (book.author == "") book.author = "not find";
 
     std::cout << "Введите текст описания (введите END на новой строке для завершения):\n";
     while (std::getline(std::cin, line)) {
         if (line == "END") break;
             full += line + '\n'; // сохраняем с переносами
     }
-    if (!full.empty()) book.setdescription(full);
+    if (!full.empty()) book.description = full;
     std::cout<<std::endl;
 
     std::cout << "введите рейтинг: ";
@@ -75,7 +107,7 @@ Book Library::addpromBook(){
         std::getline(std::cin, rating);
         if (!rating.empty()) {
             double rate = std::stod(rating);
-            book.setrating(rate);
+            book.rating = rate;
         }
         std::cout<<std::endl;
     }
@@ -83,7 +115,7 @@ Book Library::addpromBook(){
     {
         std::cerr << e.what() << '\n';
         std::cerr << "ТЫ НЕХОРОШИЙ ЧЕЛОВЕК ВВЕЛ НЕ ЦИФЕРКИ А ГРЯЗНУЮ БУКВУ!!!!!!!!" << std::endl;
-        book.setrating(0);
+        book.rating = 0;
 
     }
 
@@ -94,25 +126,25 @@ Book Library::addpromBook(){
         if (line == "END") break;
         full += line + '\n'; // сохраняем с переносами
     }
-    if (!full.empty()) book.setreview(full);
+    if (!full.empty()) book.review = full;
     std::cout << std::endl;
 
 
     std:: cout << "введите путь к обложке книги: ";
     std::getline(std::cin, book.coverPhotoPath);
     std::cout << std::endl;
-    if (book.coverPhotoPath == "") book.setcoverPhotoPath("not find");
+    if (book.coverPhotoPath == "") book.coverPhotoPath = "not find";
 
     std:: cout << "введите путь к файлу книги: ";
     std::getline(std::cin, book.bookFilePath);
     std::cout << std::endl;
-    if (book.bookFilePath == "") book.setbookFilePath("not find");
+    if (book.bookFilePath == "") book.bookFilePath = "not find";
 
     return book;
 }
 
 
-bool Library::showBookFromTable(sqlite3*db, int regim, int nach){
+bool Library::showBookFromTable(int regim, int nach){
     std::string sql = "SELECT id, title, author FROM books";
     std::string reg1 = " ORDER BY title ";
     std::string reg2 = " ORDER BY author ";
@@ -151,7 +183,7 @@ bool Library::showBookFromTable(sqlite3*db, int regim, int nach){
     return 1;
 }
 
-int Library::getTotalBooksCount(sqlite3* db) {
+int Library::getTotalBooksCount() {
     const char* sql = "SELECT COUNT(*) FROM books;";
     sqlite3_stmt* stmt; 
     int count = 0;
@@ -170,7 +202,7 @@ int Library::getTotalBooksCount(sqlite3* db) {
 }
 
 
-bool Library::deleteBookById(sqlite3* db, int id) {
+bool Library::deleteBookById(int id) {
     const char* sql = "DELETE FROM books WHERE id = ?;";
     sqlite3_stmt* stmt;
     
@@ -201,7 +233,7 @@ bool Library::deleteBookById(sqlite3* db, int id) {
     return 1;
 }
 
-bool Library::getFindBookFromTable(sqlite3* db, int regim, std::string searchTerm, int nach){
+bool Library::getFindBookFromTable(int regim, std::string searchTerm, int nach){
     std::string sql = "SELECT id, title, author FROM books WHERE ";
     std::string reg1 = " title LIKE ? ";
     std::string reg2 = " author LIKE ? ";

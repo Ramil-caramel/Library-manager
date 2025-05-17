@@ -11,7 +11,7 @@ include_directories(external)
 add_executable(lib-manager
     ./src/main.cpp
     ./src/menu.cpp
-    ./src/book.cpp
+    
     ./src/library.cpp
     ./header/book.hpp
     ./header/menu.hpp

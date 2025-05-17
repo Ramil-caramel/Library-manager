@@ -3,42 +3,11 @@
 #include "menu.hpp"
 #include "library.hpp"
 
-const char* SQL_TABLE = 
-        "CREATE TABLE IF NOT EXISTS books ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "title TEXT NOT NULL,"
-        "author TEXT NOT NULL,"
-        "description TEXT,"
-        "rating REAL,"
-        "review TEXT,"
-        "coverPhotoPath TEXT,"
-        "bookFilePath TEXT"
-        ");";
 
 int main(){
+    try{
 
-    sqlite3* db;
-    char*  errMsg = nullptr;
     Library Lib;
-
-    if (sqlite3_open("test.db", &db) != SQLITE_OK){
-        std::cerr << "база не открылась";
-        sqlite3_close(db);
-        return 0;
-    }
-
-
-    if (sqlite3_exec(db, SQL_TABLE, 0 , 0, &errMsg) != SQLITE_OK){
-        std::cerr << "error";
-        sqlite3_free(errMsg);
-        sqlite3_close(db);
-        return 0;
-    }
-    
-
-
-
-
 
     std::string input;
     int choice;
@@ -46,27 +15,26 @@ int main(){
     do{
         printMenu();
         std::getline(std::cin, input);
-        choice = std::stoi(input); //ТЫ НЕХОРОШИЙ ЧЕЛОВЕК ВВЕЛ НЕ ЦИФЕРКИ А ГРЯЗНУЮ БУКВУ!!!!!!!!
+        choice = std::stoi(input);          //ТЫ НЕХОРОШИЙ ЧЕЛОВЕК ВВЕЛ НЕ ЦИФЕРКИ А ГРЯЗНУЮ БУКВУ!!!!!!!!
         std::cout << std::endl;
         switch (choice)
         {
         case 1:
-            newBookMenu(db, &Lib);
+            newBookMenu(&Lib);
             break;
 
         case 2:
-            showallBookMenu(db, &Lib);
+            showallBookMenu(&Lib);
             break;
 
         case 3:
-                findBookMenu(db, &Lib);
+            findBookMenu(&Lib);
             break;
 
         case 4:
-                deleteBookMenu(db, &Lib);
+            deleteBookMenu(&Lib);
             break;
 
-        
         case 0:
             break;
 
@@ -80,5 +48,10 @@ int main(){
     {
         return 0;
     }
-    sqlite3_close(db);
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Фатальная ошибка: " << e.what() << std::endl;
+        return 0;
+    }
+    return 1;
 }
