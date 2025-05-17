@@ -131,7 +131,7 @@ bool Library::showBookFromTable(sqlite3*db, int regim, int nach){
 
     if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
         sqlite3_bind_int(stmt, 1, 5);
-        sqlite3_bind_int(stmt, 2, nach); //ЗДЕСЬ МЕНЯЕТСЯ ЧИЧЛО ВЫВОДЩИХСЯ В КОНСОЛЬ ПОЗИЦИЙ
+        sqlite3_bind_int(stmt, 2, nach); //ЗДЕСЬ МЕНЯЕТСЯ ЧИСЛО ВЫВОДЩИХСЯ В КОНСОЛЬ ПОЗИЦИЙ
 
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             Book book;
@@ -198,5 +198,45 @@ bool Library::deleteBookById(sqlite3* db, int id) {
     
     sqlite3_finalize(stmt);
     
+    return 1;
+}
+
+bool Library::getFindBookFromTable(sqlite3* db, int regim, std::string searchTerm, int nach){
+    std::string sql = "SELECT id, title, author FROM books WHERE ";
+    std::string reg1 = " title LIKE ? ";
+    std::string reg2 = " author LIKE ? ";
+    std::string lim = "LIMIT ? OFFSET ?";
+
+    Book a;
+    sqlite3_stmt* stmt;
+    if (regim == 1){
+        sql += reg1 + lim;
+    }
+    if (regim == 2){
+        sql += reg2 +lim;
+    }
+    sql += ";";
+
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        std::string searchPattern = "%" + searchTerm + "%";
+        sqlite3_bind_text(stmt, 1, searchPattern.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 2, 5);
+        sqlite3_bind_int(stmt, 3, nach); //ЗДЕСЬ МЕНЯЕТСЯ ЧИСЛО ВЫВОДЩИХСЯ В КОНСОЛЬ ПОЗИЦИЙ
+
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            Book book;
+            a.id = sqlite3_column_int(stmt, 0);
+            a.title = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            a.author = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+            
+            std::cout << "id: " << a.id << " title: " << a.title << " author: " << a.author << std::endl;   
+        }
+        sqlite3_finalize(stmt);
+    } 
+    else {
+        std::cerr << "ошибка подготовки запроса" << std::endl;
+    }
+  
+
     return 1;
 }

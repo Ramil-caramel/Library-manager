@@ -11,4 +11,5 @@ public:
     bool showBookFromTable(sqlite3*, int regime = 1, int nach = 0); // вывод всей таблицы с указанным параметром сортировки
     int getTotalBooksCount(sqlite3*);
     bool deleteBookById(sqlite3*, int);
+    bool getFindBookFromTable(sqlite3*, int, std::string, int nach = 0);
 };

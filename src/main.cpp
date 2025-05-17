@@ -59,10 +59,11 @@ int main(){
             break;
 
         case 3:
+                findBookMenu(db, &Lib);
             break;
 
         case 4:
-            deleteBookMenu(db, &Lib);
+                deleteBookMenu(db, &Lib);
             break;
 
         

@@ -8,3 +8,4 @@ void printMenu();
 bool newBookMenu(sqlite3*, Library*); 
 bool showallBookMenu(sqlite3*, Library*);
 bool deleteBookMenu(sqlite3*, Library*);
+bool findBookMenu(sqlite3*, Library*);
