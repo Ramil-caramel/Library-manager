@@ -5,7 +5,7 @@
 #include "sqlite3.h"
 #include <cstring>
 
-class Book{
+struct Book{
     public:
 
     unsigned int id;

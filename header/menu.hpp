@@ -3,9 +3,18 @@
 #include "sqlite3.h"
 #include "book.hpp"
 #include "library.hpp"
+class Menu
+{
+private:
+    Library& lib;
 
-void printMenu();
-bool newBookMenu(Library*); 
-bool showallBookMenu(Library*);
-bool deleteBookMenu(Library*);
-bool findBookMenu(Library*);
+public:
+    Menu(Library& ref) : lib{ref} {}
+    void printMenu();
+    bool newBookMenu(); 
+    bool showallBookMenu();
+    bool deleteBookMenu();
+    bool findBookMenu();
+
+};
+

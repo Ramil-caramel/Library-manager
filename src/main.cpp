@@ -6,33 +6,32 @@
 
 int main(){
     try{
-
     Library Lib;
-
+    Menu menu(Lib);
     std::string input;
     int choice;
 
     do{
-        printMenu();
+        menu.printMenu();
         std::getline(std::cin, input);
         choice = std::stoi(input);          //ТЫ НЕХОРОШИЙ ЧЕЛОВЕК ВВЕЛ НЕ ЦИФЕРКИ А ГРЯЗНУЮ БУКВУ!!!!!!!!
         std::cout << std::endl;
         switch (choice)
         {
         case 1:
-            newBookMenu(&Lib);
+            menu.newBookMenu();
             break;
 
         case 2:
-            showallBookMenu(&Lib);
+            menu.showallBookMenu();
             break;
 
         case 3:
-            findBookMenu(&Lib);
+            menu.findBookMenu();
             break;
 
         case 4:
-            deleteBookMenu(&Lib);
+            menu.deleteBookMenu();
             break;
 
         case 0:

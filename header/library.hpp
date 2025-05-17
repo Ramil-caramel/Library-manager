@@ -4,6 +4,7 @@
 #include "book.hpp"
 
 class Library{
+    
 private:
     sqlite3* db;
 public:

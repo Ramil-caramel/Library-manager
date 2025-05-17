@@ -1,6 +1,6 @@
 #include "menu.hpp"
 
-void printMenu() {
+void Menu::printMenu() {
     std::cout << "=== Домашняя библиотека ===" << std::endl; // не забыть добавить вывод книги по id
     std::cout << "1. Добавить книгу" << std::endl;
     std::cout << "2. Показать все книги" << std::endl; // сортировка имя, автор, оценка
@@ -10,16 +10,16 @@ void printMenu() {
     std::cout << "Выберите действие: ";
 }
 
-bool newBookMenu(Library* lib){
+bool Menu::newBookMenu(){
     
-    Book prom_book = lib->addpromBook();
+    Book prom_book = lib.addpromBook();
 
     while(true){
         std::string input;
         int choice;
 
         std::cout << "вот книга которую вы хотите добавить, вы уверены в введенных данных"<< std::endl;
-        lib->chowBook(&prom_book);
+        lib.chowBook(&prom_book);
         std::cout << "1 - да все верно" << std::endl;
         std::cout << "2 - нет я хочу заролнить все заново" << std::endl;//ТЫ НЕХОРОШИЙ ЧЕЛОВЕК ВВЕЛ НЕ ЦИФЕРКИ А ГРЯЗНУЮ БУКВУ!!!!!!!!
 
@@ -35,7 +35,7 @@ bool newBookMenu(Library* lib){
 
         switch (choice){
             case 1:
-                std::cout << lib->addBookindatabase(&prom_book) <<std::endl; // не забудь добавить методы файл менеджера по переносу фотки или проверки
+                std::cout << lib.addBookindatabase(&prom_book) <<std::endl; // не забудь добавить методы файл менеджера по переносу фотки или проверки
                 return 1;
                 break;
             case 2:
@@ -45,17 +45,17 @@ bool newBookMenu(Library* lib){
             return 0;
             break;
         }
-        prom_book = lib->addpromBook();
+        prom_book = lib.addpromBook();
     }
 }
 
-bool showallBookMenu(Library* lib){
+bool Menu::showallBookMenu(){
     int regime = 1;
 
     int nach = 0;
-    int total = lib->getTotalBooksCount();
+    int total = lib.getTotalBooksCount();
 
-    lib->showBookFromTable(regime, nach);
+    lib.showBookFromTable(regime, nach);
 
     int CHISLO_PROLETOV = 5; // я поставил 10 но где менять не придумал
     // ОНО ЕСТЬ НО Я НИЧЕГО С ЭТИМ НЕ СДЕЛАЛ
@@ -84,23 +84,23 @@ bool showallBookMenu(Library* lib){
         {
         case 1:
             regime = 1;
-            lib->showBookFromTable(regime, nach);
+            lib.showBookFromTable(regime, nach);
             break;
         case 2:
             regime = 2;
-            lib->showBookFromTable(regime, nach);
+            lib.showBookFromTable(regime, nach);
             break;
         case 3:
             if (nach - 5 >= 0){
                 nach -= 5;
             }
-            lib->showBookFromTable(regime, nach);
+            lib.showBookFromTable(regime, nach);
             break;
         case 4:
             if (nach + 5 < total){
                 nach += 5;
             }
-            lib->showBookFromTable(regime, nach);
+            lib.showBookFromTable(regime, nach);
             break;
         case 0:
             return 1;
@@ -115,7 +115,7 @@ bool showallBookMenu(Library* lib){
     
 }
 
-bool deleteBookMenu(Library* lib){
+bool Menu::deleteBookMenu(){
     std::string input;
     int id;
     std::cout << "Введите id книги для удаления: ";
@@ -123,7 +123,7 @@ bool deleteBookMenu(Library* lib){
     {
         std::getline(std::cin, input);
         id = std::stoi(input);
-        std::cout << lib->deleteBookById(id);
+        std::cout << lib.deleteBookById(id);
     }
     catch(const std::exception& e)
     {
@@ -136,11 +136,11 @@ bool deleteBookMenu(Library* lib){
     return 1;
 }
 
-bool findBookMenu(Library* lib){
+bool Menu::findBookMenu(){
 
     int regime = 1;
     int nach = 0;
-    int total = lib->getTotalBooksCount();
+    int total = lib.getTotalBooksCount();
 
     int CHISLO_PROLETOV = 5; // я поставил 10 но где менять не придумал
     // ОНО ЕСТЬ НО Я НИЧЕГО С ЭТИМ НЕ СДЕЛАЛ
@@ -153,7 +153,7 @@ bool findBookMenu(Library* lib){
 
         std::string input;
         int choice;
-        std::cout <<std::endl;
+        std::cout << std::endl;
         std::cout << "режим поиска:" <<std::endl;
         std::cout << "1 - поиск по названию" << std::endl;
         std::cout << "2 - поиск по автору" << std::endl;
@@ -178,30 +178,30 @@ bool findBookMenu(Library* lib){
         case 1:
             regime = 1;
             std::cout << "Включен режим поиска по названию" << std::endl;
-            lib->getFindBookFromTable(regime, search, nach);
+            lib.getFindBookFromTable(regime, search, nach);
             break;
         case 2:
             regime = 2;
             std::cout << "Включен режим поиска по автору" <<std::endl;
-            lib->getFindBookFromTable(regime, search, nach);
+            lib.getFindBookFromTable(regime, search, nach);
             break;
         case 3:
             if (nach - 5 >= 0){
                 nach -= 5;
             }
-            lib->getFindBookFromTable(regime, search, nach);
+            lib.getFindBookFromTable(regime, search, nach);
             break;
         case 4:
             if (nach + 5 < total){
                 nach += 5;
             }
-            lib->getFindBookFromTable(regime, search, nach);
+            lib.getFindBookFromTable(regime, search, nach);
             break;
         case 5:
             std::cout << "Введите новый элемент для поиска: ";
             std::getline(std::cin, search);
             nach = 0;
-            lib->getFindBookFromTable(regime, search, nach);
+            lib.getFindBookFromTable(regime, search, nach);
             break;
 
         case 0:
