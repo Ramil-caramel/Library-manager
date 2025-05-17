@@ -168,3 +168,35 @@ int Library::getTotalBooksCount(sqlite3* db) {
     }
     return count;
 }
+
+
+bool Library::deleteBookById(sqlite3* db, int id) {
+    const char* sql = "DELETE FROM books WHERE id = ?;";
+    sqlite3_stmt* stmt;
+    
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "Ошибка подготовки запроса: " << sqlite3_errmsg(db) << std::endl;
+        return 0;
+    }
+    
+    sqlite3_bind_int(stmt, 1, id);
+    
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
+        // Проверяем, была ли действительно строка вообще?
+        if (sqlite3_changes(db) > 0) {
+            std::cout << "Книга " << id << " удалена" << std::endl;
+        } 
+        else 
+        {
+            std::cout << "Книга " << id << " не найдена" << std::endl;
+        }
+    } 
+    else {
+        std::cerr << "Ошибка при удалении: " << sqlite3_errmsg(db) << std::endl;
+
+    }
+    
+    sqlite3_finalize(stmt);
+    
+    return 1;
+}

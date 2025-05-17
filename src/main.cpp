@@ -62,10 +62,9 @@ int main(){
             break;
 
         case 4:
+            deleteBookMenu(db, &Lib);
             break;
 
-        case 5:
-            break;
         
         case 0:
             break;

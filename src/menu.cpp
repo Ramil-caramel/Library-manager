@@ -6,7 +6,6 @@ void printMenu() {
     std::cout << "2. Показать все книги" << std::endl; // сортировка имя, автор, оценка
     std::cout << "3. Найти книгу" << std::endl; // по названию, автору, тегу
     std::cout << "4. Удалить книгу" << std::endl;
-    std::cout << "5. Изменить книгу" << std::endl;
     std::cout << "0. Выход" << std::endl;
     std::cout << "Выберите действие: ";
 }
@@ -98,4 +97,25 @@ bool showallBookMenu(sqlite3* db, Library* lib){
         }
     }
     
+}
+
+bool deleteBookMenu(sqlite3* db, Library* lib){
+    std::string input;
+    int id;
+    std::cout << "Введите id книги для удаления: ";
+    try
+    {
+        std::getline(std::cin, input);
+        id = std::stoi(input);
+        std::cout << lib->deleteBookById(db, id);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "это походу не индекс книги" << std::endl; 
+        std::cerr << e.what() << '\n';
+        return 0;
+    }
+    
+
+    return 1;
 }
