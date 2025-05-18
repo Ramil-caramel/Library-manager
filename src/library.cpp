@@ -63,16 +63,6 @@ bool Library::addBookindatabase(Book* book){
     return 1;
 }
 
-bool Library::chowBook(Book* book){
-    std::cout << book->title << std::endl;
-    std::cout << book->author << std::endl;
-    std::cout << book->description << std::endl;
-    std::cout << book->rating << std::endl;
-    std::cout << book->review << std::endl;
-    std::cout << book->coverPhotoPath << std::endl;
-    std::cout << book->bookFilePath << std::endl;
-    return 1;
-}
 
 Book Library::addpromBook(){
     Book book;
@@ -271,4 +261,38 @@ bool Library::getFindBookFromTable(int regim, std::string searchTerm, int nach){
   
 
     return 1;
+}
+
+Book Library::returnBook(int id){
+    const char* sql = "SELECT * FROM books WHERE id = ?;";
+    sqlite3_stmt* stmt;
+    Book retbook{};
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "Ошибка подготовки запроса: " << sqlite3_errmsg(db) << std::endl;
+        return retbook;
+    }
+    sqlite3_bind_int(stmt, 1, id);
+    
+    bool found = false;
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        found = true;
+        retbook.id = sqlite3_column_int(stmt, 0);
+        retbook.title = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        retbook.author = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        retbook.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+        retbook.rating = sqlite3_column_double(stmt, 4);
+        retbook.review = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
+        retbook.coverPhotoPath = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6));
+        retbook.bookFilePath =     reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7));
+    }
+
+    if (!found) {
+        std::cout << "Книга " << id << " не найдена" << std::endl;
+    }
+    
+    sqlite3_finalize(stmt);
+    
+    return retbook;
+
 }

@@ -1,11 +1,26 @@
 #include "menu.hpp"
 
+Menu* Menu::_instance = nullptr;
+
+Menu* Menu::Instence(Library& ref){
+    if (!_instance){
+        _instance = new Menu(ref);
+    }
+    return _instance;
+}
+
+void Menu::Destroy() {
+        delete _instance;
+        _instance = nullptr;
+    }
+
 void Menu::printMenu() {
     std::cout << "=== Домашняя библиотека ===" << std::endl; // не забыть добавить вывод книги по id
     std::cout << "1. Добавить книгу" << std::endl;
     std::cout << "2. Показать все книги" << std::endl; // сортировка имя, автор, оценка
     std::cout << "3. Найти книгу" << std::endl; // по названию, автору, тегу
     std::cout << "4. Удалить книгу" << std::endl;
+    std::cout << "5. Показать книгу" << std::endl;
     std::cout << "0. Выход" << std::endl;
     std::cout << "Выберите действие: ";
 }
@@ -19,7 +34,7 @@ bool Menu::newBookMenu(){
         int choice;
 
         std::cout << "вот книга которую вы хотите добавить, вы уверены в введенных данных"<< std::endl;
-        lib.chowBook(&prom_book);
+        this->showBook(prom_book);
         std::cout << "1 - да все верно" << std::endl;
         std::cout << "2 - нет я хочу заролнить все заново" << std::endl;//ТЫ НЕХОРОШИЙ ЧЕЛОВЕК ВВЕЛ НЕ ЦИФЕРКИ А ГРЯЗНУЮ БУКВУ!!!!!!!!
 
@@ -216,4 +231,52 @@ bool Menu::findBookMenu(){
     }
 
     return 1;
+}
+
+bool Menu::showBook(Book& book){
+    try {
+        std::cout << book.title << std::endl;
+        std::cout << book.author << std::endl;
+        std::cout << book.description << std::endl;
+        std::cout << book.rating << std::endl;
+        std::cout << book.review << std::endl;
+        std::cout << book.coverPhotoPath << std::endl;
+        std::cout << book.bookFilePath << std::endl;
+    }
+    catch(const std::exception& e){
+            std::cerr << "something go wrong там где вывод" << std::endl; 
+            //std::cerr << e.what() << '\n';
+            return 0;
+
+    }
+    return 1;
+
+}
+
+bool Menu::outputBookMenu(){
+    while (true)
+    {
+        
+        std::string input;
+        int choice;
+
+        try{
+            std::cout << "Введите id книги или 0 для выхода: ";
+            std::getline(std::cin, input);
+            choice = std::stoi(input);
+            std::cout<<std::endl;
+        }
+        catch(const std::exception& e){
+            std::cerr << "invalid argument" << std::endl; 
+            //std::cerr << e.what() << '\n';
+            return 0;
+        }
+        if (!choice) return 1; 
+        else{
+            Book book = lib.returnBook(choice);
+            this->showBook(book);
+            std::cout << std::endl;
+        } 
+    }
+    
 }
